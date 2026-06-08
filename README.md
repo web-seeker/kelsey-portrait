@@ -155,7 +155,7 @@ kelsey-portrait/
 
 ### Happy 的赞赏码
 
-![微信赞赏码](donate.jpg)
+<img src="donate.jpg" alt="微信赞赏码" width="300" />
 
 *感恩遇见，感谢支持*
 
