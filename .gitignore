@@ -1,0 +1,80 @@
+# ===========================================
+# 安全优先 .gitignore
+# ===========================================
+
+# ============ 环境变量和密钥 ============
+# 绝对禁止提交包含真实密钥的文件
+.env
+.env.*
+!.env.example
+
+# 任何包含密钥、密码、token 的文件
+*.pem
+*.key
+credentials.json
+secrets.json
+*.secret
+*.token
+
+# ============ Node.js ============
+# 依赖目录
+node_modules/
+
+# 构建产物
+.next/
+out/
+build/
+dist/
+.nuxt/
+.cache/
+
+# ============ 日志和临时文件 ============
+# 日志文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 操作系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE 和编辑器
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ============ 测试和覆盖率 ============
+coverage/
+.nyc_output/
+*.lcov
+
+# ============ Vercel ============
+.vercel/
+
+# ============ 其他 ============
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 备份文件
+*.bak
+*.backup
+
+# 压缩包
+*.zip
+*.tar.gz
+*.rar

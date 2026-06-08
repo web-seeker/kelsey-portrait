@@ -84,21 +84,25 @@ vercel
 ## 🎨 四种艺术风格
 
 ### A. 数字印象主义 (Digital Impressionism)
+
 - 互补冷暖色对比
 - painterly 笔触质感
 - 氛围感优先
 
 ### B. 炭笔线条 (Charcoal Line Art)
+
 - 粗炭笔颗粒质感
 - 纯白背景，呼吸感线条
 - 头发由独立线条构成
 
 ### C. 半写实动漫 (Semi-Realistic Anime)
+
 - 纯色/渐变纯色背景
 - 光滑瓷器般肌肤
 - 梦幻白色光点效果
 
 ### D. 彩色数字肖像 (Color Digital Portrait)
+
 - 15-20 个色相丰富色彩
 - 硬/软/消失边缘变化
 - 饱和度层级分明
@@ -129,7 +133,7 @@ kelsey-portrait/
 │   ├── PromptDisplay.tsx   # 提示词展示组件
 │   └── StyleSelector.tsx   # 风格选择组件
 ├── lib/
-│   ├── prompt-builder.ts    # 提示词构建器
+│   ├── prompt-builder.ts   # 提示词构建器
 │   └── replicate.ts        # Replicate API 封装
 ├── types/
 │   └── index.ts            # 类型定义
@@ -142,6 +146,20 @@ kelsey-portrait/
 | 变量名 | 必填 | 说明 |
 |--------|------|------|
 | `REPLICATE_API_TOKEN` | 是 | Replicate API 密钥 |
+
+## ☕ 赞赏支持
+
+如果你觉得这个项目对你有帮助，欢迎扫码支持一下！🙏
+
+<div align="center">
+
+### Happy 的赞赏码
+
+![微信赞赏码](donate.jpg)
+
+*感恩遇见，感谢支持*
+
+</div>
 
 ## 📝 License
 
