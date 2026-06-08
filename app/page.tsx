@@ -1,22 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, Info } from 'lucide-react';
+import { Info, Copy } from 'lucide-react';
 import StyleSelector from '@/components/StyleSelector';
 import DescriptionInput from '@/components/DescriptionInput';
-import PromptDisplay from '@/components/PromptDisplay';
-import ImagePreview from '@/components/ImagePreview';
-import { StyleType, DescriptionData, GenerationState } from '@/types';
+import { StyleType, DescriptionData } from '@/types';
 import { buildPrompt, defaultDescriptions } from '@/lib/prompt-builder';
 
 export default function Home() {
   const [selectedStyle, setSelectedStyle] = useState<StyleType>('A');
   const [description, setDescription] = useState<DescriptionData>(defaultDescriptions);
   const [prompt, setPrompt] = useState<string>('');
-  const [generationState, setGenerationState] = useState<GenerationState>({
-    status: 'idle',
-  });
   const [mounted, setMounted] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // 初始化提示词
   useEffect(() => {
@@ -33,59 +29,15 @@ export default function Home() {
     }
   }, [selectedStyle, description, mounted]);
 
-  // 生成图像
-  const handleGenerate = async () => {
-    if (generationState.status === 'generating') return;
-
-    setGenerationState({
-      status: 'generating',
-      progress: '正在连接服务...',
-    });
-
+  // 复制提示词
+  const handleCopy = async () => {
     try {
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt,
-          style: selectedStyle,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || '生成失败');
-      }
-
-      const data = await response.json();
-
-      setGenerationState({
-        status: 'generating',
-        progress: '正在生成图像...',
-        imageUrl: data.imageUrl,
-      });
-
-      // 如果直接返回了图片URL
-      if (data.imageUrl && !data.id) {
-        setGenerationState({
-          status: 'succeeded',
-          imageUrl: data.imageUrl,
-        });
-      }
-    } catch (error) {
-      setGenerationState({
-        status: 'failed',
-        error: error instanceof Error ? error.message : '生成失败，请重试',
-      });
+      await navigator.clipboard.writeText(prompt);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
     }
-  };
-
-  // 重新生成
-  const handleRetry = () => {
-    setGenerationState({ status: 'idle' });
-    setTimeout(handleGenerate, 100);
   };
 
   if (!mounted) {
@@ -120,7 +72,7 @@ export default function Home() {
       </div>
 
       {/* 主内容 */}
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Header */}
         <header className="text-center mb-12 animate-float">
           <div className="inline-flex items-center gap-3 mb-4">
@@ -132,7 +84,7 @@ export default function Home() {
             </h1>
           </div>
           <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto">
-            融合四种标志性艺术风格，生成专业级的艺术肖像
+            融合四种标志性艺术风格，免费生成专业级的艺术肖像提示词
           </p>
 
           {/* 风格标签 */}
@@ -151,62 +103,60 @@ export default function Home() {
         </header>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Panel - Controls */}
-          <div className="space-y-8">
-            <div className="card glass">
-              <StyleSelector
-                selectedStyle={selectedStyle}
-                onSelect={setSelectedStyle}
-              />
-            </div>
-
-            <div className="card glass">
-              <DescriptionInput data={description} onChange={setDescription} />
-            </div>
-
-            {/* Generate Button */}
-            <button
-              onClick={handleGenerate}
-              disabled={generationState.status === 'generating'}
-              className="w-full btn-primary py-4 text-lg flex items-center justify-center gap-3 disabled:opacity-60"
-            >
-              {generationState.status === 'generating' ? (
-                <>
-                  <div className="loading-spinner"></div>
-                  生成中...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-5 h-5" />
-                  生成艺术肖像
-                </>
-              )}
-            </button>
-
-            {/* Prompt Display */}
-            {prompt && <PromptDisplay prompt={prompt} />}
+        <div className="space-y-8">
+          {/* 风格选择 */}
+          <div className="card glass">
+            <StyleSelector
+              selectedStyle={selectedStyle}
+              onSelect={setSelectedStyle}
+            />
           </div>
 
-          {/* Right Panel - Preview */}
-          <div className="space-y-8">
-            <div className="card glass h-full">
-              <ImagePreview state={generationState} onRetry={handleRetry} />
-            </div>
+          {/* 描述输入 */}
+          <div className="card glass">
+            <DescriptionInput data={description} onChange={setDescription} />
+          </div>
 
-            {/* Tips */}
-            <div className="card glass border-blue-500/20">
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                <div className="space-y-2 text-sm text-white/70">
-                  <h4 className="font-semibold text-white">使用技巧</h4>
-                  <ul className="space-y-1 list-disc list-inside">
-                    <li>选择不同的风格会产生截然不同的艺术效果</li>
-                    <li>描述越详细，生成效果越符合预期</li>
-                    <li>可以组合使用多个预设描述</li>
-                    <li>自定义区域可添加任何特殊要求</li>
-                  </ul>
-                </div>
+          {/* 提示词展示 */}
+          <div className="card glass">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white">生成的提示词</h2>
+              <button
+                onClick={handleCopy}
+                className="btn-primary flex items-center gap-2"
+              >
+                {copied ? (
+                  <>
+                    <span className="text-green-300">✓</span>
+                    已复制
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    复制提示词
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="prompt-display">
+              <pre className="whitespace-pre-wrap text-sm leading-relaxed text-white/90">
+                {prompt}
+              </pre>
+            </div>
+          </div>
+
+          {/* 使用说明 */}
+          <div className="card glass border-blue-500/20">
+            <div className="flex items-start gap-3">
+              <Info className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+              <div className="space-y-2 text-sm text-white/70">
+                <h4 className="font-semibold text-white">💡 使用说明</h4>
+                <ul className="space-y-1 list-disc list-inside">
+                  <li>选择你喜欢的艺术风格</li>
+                  <li>输入或选择人物描述</li>
+                  <li>点击"复制提示词"获取完整提示词</li>
+                  <li>将提示词粘贴到 Midjourney、Stable Diffusion 等工具中使用</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -218,7 +168,7 @@ export default function Home() {
             由 Kelsey Portrait 提供 · 基于 Kelsey Hsiao 艺术风格
           </p>
           <p className="mt-2">
-            使用 Next.js + Replicate API 构建
+            提示词可用于 Midjourney、Stable Diffusion、DALL-E 等 AI 绘画工具
           </p>
         </footer>
       </div>
