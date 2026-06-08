@@ -19,7 +19,7 @@ export interface DescriptionData {
 
 export interface GenerationState {
   status: 'idle' | 'generating' | 'succeeded' | 'failed';
-  progress?: number;
+  progress?: string | number;
   imageUrl?: string;
   error?: string;
 }
